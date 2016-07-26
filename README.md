@@ -1,7 +1,1 @@
-Run the code like this:
-
-*python face_detect.py abba.png haarcascade_frontalface_default.xml*
-
-If you want to understand how the code works, the details are here:
-
-https://realpython.com/blog/python/face-recognition-with-python/
+Small project I'm working on. Hopefully I can implement this in my school to replace ID scanners when coming in or to a meeting.
