@@ -88,7 +88,7 @@ def computeAvg():
 #        print sumvec
     avg =m*sumvec
     #print avg
-    np.save("avgface.npy",avg)
+    np.save("savedeigenfaces.npy",avg)
     return avg
 #    avg=avg.reshape(20,20)
     
