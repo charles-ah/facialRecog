@@ -1,13 +1,15 @@
 import numpy as np
 import cv2
 import sys
+import os
 
-out = open('savedeigenfaces.txt','a')
+out = open('faces.txt','w')
 
 # Get user supplied values
-imagePath = sys.argv[1]
-cascPath = sys.argv[2]
-out.write(str(imagePath)+"\n")
+#imagePath = sys.argv[1]
+#cascPath = sys.argv[2]
+cascPath = sys.argv[1] 
+#out.write(str(imagePath)+"\n")
 # Create the haar cascade
 faceCascade = cv2.CascadeClassifier(cascPath)
 
@@ -16,8 +18,6 @@ Y=[]
 W=[]
 H=[]
 
-image = cv2.imread(imagePath)
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 facevector = []
 def addfaces(img):
@@ -68,15 +68,24 @@ def detect(scale,img,origX,origY):
         addfaces(cv2.resize(gray[y:y+h,x:x+w],(20,20)))
         #out.write(str(y) + " " + str(y+h) + str(x) + " " + str(x+w) + "\n")
        # gray[y:y+h, x:x+w] = np.zeros(h,w)
-        #cv2.imshow("img",gray)
-        #cv2.waitKey(0)
+        cv2.imshow("img",img[y:y+h,x:x+w])
+        cv2.waitKey(0)
        # detect(scale,gray,0,0)
        # break
     cv2.imshow("faces found",img)
     #out.close()
     cv2.waitKey(0)
-detect(1.1,gray,0,0)
-cv2.waitKey(0)
+
+#print os.getcwd()
+for imagePath in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces"):
+    if imagePath.endswith(".png"):
+        #print imagePath
+        out.write(imagePath[0:-4]+"\n")
+        image = cv2.imread("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/"+imagePath)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        
+        detect(1.1,gray,0,0)
+out.close()
 
 
 def computeAvg():

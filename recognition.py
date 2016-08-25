@@ -8,10 +8,43 @@ avgFace = np.load("savedavgface.npy")
 u = np.load("savedeigenvector.npy")
 #print eigenfaces
 
-image = cv2.imread(sys.argv[1])
-faceCascade = cv2.CascadeClassifier(sys.argv[2])
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+names = (open("faces.txt").read()).split("\n")
 
+out = open("results.txt",'a')
+
+#image = cv2.imread(sys.argv[1])
+faceCascade = cv2.CascadeClassifier(sys.argv[1])
+
+
+
+# Camera 0 is the integrated web cam on my computer
+camera_port = 0
+
+#Number of frames to throw away while the camera adjusts to light levels
+ramp_frames = 30
+
+# Now we can initialize the camera capture object with the cv2.VideoCapture class.
+# All it needs is the index to a camera port.
+camera = cv2.VideoCapture(camera_port)
+
+ 
+# Captures a single image from the camera and returns it in PIL format
+def get_image():
+ # read is the easiest way to get a full image out of a VideoCapture object.
+ retval, im = camera.read()
+ return im
+
+for i in xrange(ramp_frames):
+ temp = get_image()
+print("Taking image...")
+# Take the actual image we want to keep
+camera_capture = get_image()
+
+image = camera_capture
+
+del(camera)
+
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 facevector = []
 def addfaces(img):
@@ -76,4 +109,6 @@ for i in range(omega.shape[1]):
         temp.append(np.sum(np.square(face - eigenface)))
     MinIndex.append(np.argmin(temp))
     print temp[np.argmin(temp)]
-print MinIndex
+    out.write(names[np.argmin(temp)]+"\n")
+#print MinIndex
+out.close()
