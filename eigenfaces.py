@@ -77,18 +77,20 @@ def detect(scale,img,origX,origY):
     cv2.waitKey(0)
 detect(1.1,gray,0,0)
 cv2.waitKey(0)
-    
+
+
 def computeAvg():
    # img = np.reshape(img,img.shape[0]*img.shape[1])
     sumvec = np.zeros(400)
-    m = 1.0/len(facevector)
-#    print str(m)
+    m = 1/len(facevector)   
+ #   print len(facevector)    
+   
     for arr in facevector:
         sumvec=np.add(sumvec,arr)
 #        print sumvec
     avg =m*sumvec
     #print avg
-    np.save("avgface.npy",avg)
+    np.save("savedavgface.npy",avg)
     return avg
 #    avg=avg.reshape(20,20)
     
@@ -106,16 +108,18 @@ while i < len(facevector):
   #  cv2.waitKey(0)
     arr = np.subtract(facevector[i],avgFace)
     facevector[i] = arr
+    i+=1
 #    i = facevector.index(arr)
 #    print i
     #print str(np.sum(np.square(temparr)))
     #cv2.imshow(str(np.sum(np.square(temparr))),np.reshape(arr,(20,20)))
     #cv2.waitKey(0) 
+    '''  
     if np.sum(np.square(arr))>1000000:
         del facevector[i]
     else:
         i+=1
-
+      '''   
 '''        
 for arr in facevector:
 #    print str(np.sum(np.square(arr)))
@@ -128,7 +132,7 @@ for arr in facevector:
 cov = np.zeros((400,400))
 m = 1.0/ len(facevector)
 for arr in facevector:
-    cov = m*np.add(cov,np.transpose(arr) * arr)
+    cov = m*np.add(cov,np.dot(np.transpose(arr), arr))
 #    print np.dot(np.transpose(arr),arr)
 #print cov
 eigvalue =  np.linalg.eig(cov)[0]
@@ -139,17 +143,21 @@ eigvector = np.linalg.eig(cov)[1]
 
 [U, S, V] = np.linalg.svd(cov)
 
-U_reduce = U[1,0:len(facevector)]
+U_reduce = U[:,0:len(facevector)]
 
-u =np.transpose(facevector)*U_reduce
+#u =np.transpose(facevector)*U_reduce
 #print u.shape[0]
 #print u.shape[1]
-
+'''
 for i in range(u.shape[1]):
     cv2.imshow("eigenface",np.reshape(u[:,i],(20,20)))
     cv2.waitKey(0)
+'''
+#print facevector
+#omega = np.transpose(u)*facevector
+omega = np.dot( np.transpose(U_reduce),np.transpose(facevector))
 
-omega = np.transpose(u)*facevector
+np.save("savedeigenvector.npy",U_reduce)
 np.save("savedeigenfaces.npy",omega)
 #for face in omega:
  #   print face

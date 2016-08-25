@@ -4,11 +4,12 @@ import sys
 
 
 eigenfaces = np.load("savedeigenfaces.npy")
-avgface = np.load("savedavgface.npy")
-print eigenfaces
+avgFace = np.load("savedavgface.npy")
+u = np.load("savedeigenvector.npy")
+#print eigenfaces
 
-image = cv2.imread(sys.argv[0])
-faceCascade = cv2.CascadeClassifier(sys.argv[1])
+image = cv2.imread(sys.argv[1])
+faceCascade = cv2.CascadeClassifier(sys.argv[2])
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
@@ -40,3 +41,39 @@ def detect(scale,img,origX,origY):
         addfaces(cv2.resize(gray[y:y+h,x:x+w],(20,20)))
     
 detect(1.1,gray,0,0)
+
+#print u.shape[1]
+
+i=0
+while i < len(facevector):
+#    print str(i)
+ #   cv2.imshow("faces",facevector[i])
+  #  cv2.waitKey(0)
+    arr = np.subtract(facevector[i],avgFace)
+    facevector[i] = arr
+    i+=1
+#    i = facevector.index(arr)
+#    print i
+    #print str(np.sum(np.square(temparr)))
+    #cv2.imshow(str(np.sum(np.square(temparr))),np.reshape(arr,(20,20)))
+    #cv2.waitKey(0)
+'''
+    if np.sum(np.square(arr))>1000000:
+        del facevector[i]
+    else:
+        i+=1
+'''
+
+omega = np.dot(np.transpose(u),np.transpose(facevector))
+#print eigenfaces.shape[1]
+MinIndex = []
+
+for i in range(omega.shape[1]):
+    temp = []
+    face = omega[:,i]
+    for j in range(eigenfaces.shape[1]):
+        eigenface = eigenfaces[:,j]
+        temp.append(np.sum(np.square(face - eigenface)))
+    MinIndex.append(np.argmin(temp))
+    print temp[np.argmin(temp)]
+print MinIndex
