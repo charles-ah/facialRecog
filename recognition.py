@@ -10,12 +10,10 @@ u = np.load("savedeigenvector.npy")
 
 names = (open("faces.txt").read()).split("\n")
 
-out = open("results.txt",'a')
+out = open("results.txt",'w')
 
 #image = cv2.imread(sys.argv[1])
 faceCascade = cv2.CascadeClassifier(sys.argv[1])
-
-
 
 # Camera 0 is the integrated web cam on my computer
 camera_port = 0
@@ -41,11 +39,12 @@ print("Taking image...")
 camera_capture = get_image()
 
 image = camera_capture
-
+print image.shape
 del(camera)
-
+cv2.imshow("pic",image)
+cv2.waitKey(0)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
+#print cv2.resize(gray[0],(20,20))
 facevector = []
 def addfaces(img):
     img = np.reshape(img,img.shape[0]*img.shape[1])
@@ -69,14 +68,16 @@ def detect(scale,img,origX,origY):
         )
 
     for (x,y,w,h) in faces:
-
+        
         cv2.rectangle(gray, (x, y), (x+w, y+h), (0, 255, 0), 2)
         addfaces(cv2.resize(gray[y:y+h,x:x+w],(20,20)))
     
+        cv2.imshow("face",gray)
+        cv2.waitKey(0)
 detect(1.1,gray,0,0)
 
 #print u.shape[1]
-
+print(len(facevector))
 i=0
 while i < len(facevector):
 #    print str(i)
@@ -100,7 +101,7 @@ while i < len(facevector):
 omega = np.dot(np.transpose(u),np.transpose(facevector))
 #print eigenfaces.shape[1]
 MinIndex = []
-
+MinVal = []
 for i in range(omega.shape[1]):
     temp = []
     face = omega[:,i]
@@ -108,7 +109,8 @@ for i in range(omega.shape[1]):
         eigenface = eigenfaces[:,j]
         temp.append(np.sum(np.square(face - eigenface)))
     MinIndex.append(np.argmin(temp))
-    print temp[np.argmin(temp)]
-    out.write(names[np.argmin(temp)]+"\n")
+    MinVal.append(temp[np.argmin(temp)])
+
+out.write(names[MinIndex[np.argmin(MinVal)]])
 #print MinIndex
 out.close()
