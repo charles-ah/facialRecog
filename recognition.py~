@@ -6,12 +6,16 @@ import sys
 eigenfaces = np.load("savedeigenfaces.npy")
 avgFace = np.load("savedavgface.npy")
 u = np.load("savedeigenvector.npy")
-#print eigenfaces
 
+theta = np.load("theta.npy")
+#print eigenfaces
+#print theta
 names = (open("faces.txt").read()).split("\n")
 
 out = open("results.txt",'w')
 
+outpos = open("positive.txt","a")
+outneg = open("negative.txt",'a')
 #image = cv2.imread(sys.argv[1])
 faceCascade = cv2.CascadeClassifier(sys.argv[1])
 
@@ -34,16 +38,19 @@ def get_image():
 
 for i in xrange(ramp_frames):
  temp = get_image()
-print("Taking image...")
+#print("Taking image...")
 # Take the actual image we want to keep
 camera_capture = get_image()
 
 image = camera_capture
-print image.shape
+#print image.shape
 del(camera)
-cv2.imshow("pic",image)
-cv2.waitKey(0)
+#cv2.imshow("pic",image)
+#cv2.waitKey(0)
+
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#gray =image
+#print image.shape
 #print cv2.resize(gray[0],(20,20))
 facevector = []
 def addfaces(img):
@@ -63,7 +70,7 @@ def detect(scale,img,origX,origY):
         img,
         scaleFactor=scale,
         minNeighbors=1,
-        minSize=(20, 20),
+        minSize=(50, 50),
         flags = cv2.cv.CV_HAAR_SCALE_IMAGE
         )
 
@@ -72,12 +79,12 @@ def detect(scale,img,origX,origY):
         cv2.rectangle(gray, (x, y), (x+w, y+h), (0, 255, 0), 2)
         addfaces(cv2.resize(gray[y:y+h,x:x+w],(20,20)))
     
-        cv2.imshow("face",gray)
-        cv2.waitKey(0)
+       # cv2.imshow("face",gray)
+       # cv2.waitKey(0)
 detect(1.1,gray,0,0)
 
 #print u.shape[1]
-print(len(facevector))
+#print(len(facevector))
 i=0
 while i < len(facevector):
 #    print str(i)
@@ -98,18 +105,52 @@ while i < len(facevector):
         i+=1
 '''
 
+def sigmoid(arr):
+    return 1.0 / (1.0 + np.exp(-1*arr))
+
 omega = np.dot(np.transpose(u),np.transpose(facevector))
 #print eigenfaces.shape[1]
+
 MinIndex = []
+MinDist = []
 
 for i in range(omega.shape[1]):
     temp = []
     face = omega[:,i]
     for j in range(eigenfaces.shape[1]):
         eigenface = eigenfaces[:,j]
-        temp.append(np.sum(np.square(face - eigenface)))
+        dist = np.sum(np.square(face - eigenface))
+        temp.append(dist)
+        #print dist
+        #outneg.write(str(dist) +"\n")
     MinIndex.append(np.argmin(temp))
-    print temp[np.argmin(temp)]
-    out.write(names[np.argmin(temp)]+"\n")
+    MinDist.append(temp[np.argmin(temp)])
+'''
+if len(MinDist) == 1:
+    out.write(names[MinIndex[0]] + "\n")
+else:
+    MinDist = (1/np.std(MinDist))*(MinDist - np.sum(MinDist)/len(MinDist))
+    for i in range(len(MinDist)):    
+        #    print MinDist[i]*theta[1]+theta[0]`
+        print sigmoid(MinDist[i]*theta[1]+theta[0])
+        if (sigmoid(MinDist[i]*theta[1]+theta[0]) > 0.5):
+            out.write(names[MinIndex[i]] + "\n")
+        else:
+            out.write("Unidentified \n")
+'''
+#outneg.close()
+
+print names[MinIndex[np.argmin(MinDist)]]
+if names[MinIndex[np.argmin(MinDist)]] == "czhang2":
+    outpos.write(str(MinDist[np.argmin(MinDist)])+"\n")
+else:
+    outneg.write(str(MinDist[np.argmin(MinDist)])+"\n")
+
 #print MinIndex
 out.close()
+
+#print MinDist[np.argmin(MinDist)]
+
+#outpos.write(str(MinDist[np.argmin(MinDist)])+"\n")
+#outpos.close()
+

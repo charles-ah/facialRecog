@@ -85,8 +85,18 @@ for imagePath in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facia
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
         detect(1.1,gray,0,0)
-out.close()
-
+#out.close()
+'''
+for dir in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/att_faces"):
+    for imagePath in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/att_faces/"+dir):
+        if imagePath.endswith(".pgm"):
+        #print imagePath
+            out.write(dir + imagePath[0:-4]+"\n")
+            image = cv2.imread("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/att_faces/"+dir+"/"+imagePath)
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+           # gray = image
+            detect(1.1,gray,0,0)
+'''
 
 def computeAvg():
    # img = np.reshape(img,img.shape[0]*img.shape[1])
@@ -151,9 +161,27 @@ eigvector = np.linalg.eig(cov)[1]
 #print eigvector
 
 [U, S, V] = np.linalg.svd(cov)
-
-U_reduce = U[:,0:len(facevector)]
-
+print U.shape
+#U_reduce = U[:,0:len(facevector)]
+k=1
+ProjErr=[]
+while k < 400:
+    U_reduce = U[:,0:k]
+    omega = np.dot( np.transpose(U_reduce),np.transpose(facevector))
+    appr = np.dot(U_reduce,omega)
+    delta = appr - np.transpose(facevector)
+    error = 0
+    for i in range(len(facevector)):
+        error += sum(np.square(delta[i,:]))
+    Var = 0
+    for i in range(len(facevector)):
+        Var += sum(np.square(np.array(facevector[i])))
+    error = error/Var
+    ProjErr.append(error)
+    k+=1
+k = np.argmin(ProjErr)
+print k
+print ProjErr[k]
 #u =np.transpose(facevector)*U_reduce
 #print u.shape[0]
 #print u.shape[1]
