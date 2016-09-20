@@ -49,6 +49,7 @@ del(camera)
 #cv2.waitKey(0)
 
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
 #gray =image
 #print image.shape
 #print cv2.resize(gray[0],(20,20))
@@ -124,8 +125,8 @@ for i in range(omega.shape[1]):
         #print dist
         #outneg.write(str(dist) +"\n")
     MinIndex.append(np.argmin(temp))
-    MinDist.append(temp[np.argmin(temp)])
-'''
+    MinDist.append(min(temp))
+
 if len(MinDist) == 1:
     out.write(names[MinIndex[0]] + "\n")
 else:
@@ -137,20 +138,22 @@ else:
             out.write(names[MinIndex[i]] + "\n")
         else:
             out.write("Unidentified \n")
-'''
+
 #outneg.close()
-
+'''
 print names[MinIndex[np.argmin(MinDist)]]
-if names[MinIndex[np.argmin(MinDist)]] == "czhang2":
-    outpos.write(str(MinDist[np.argmin(MinDist)])+"\n")
-else:
-    outneg.write(str(MinDist[np.argmin(MinDist)])+"\n")
-
+if len(MinDist) != 1:
+    MinDist = 1/np.std(MinDist)*(MinDist - np.average(MinDist))
+    if names[MinIndex[np.argmin(MinDist)]] == "czhang2":
+        outpos.write(str(MinDist[np.argmin(MinDist)])+"\n")
+    else:
+        outneg.write(str(MinDist[np.argmin(MinDist)])+"\n")
+'''
 #print MinIndex
 out.close()
 
 #print MinDist[np.argmin(MinDist)]
 
 #outpos.write(str(MinDist[np.argmin(MinDist)])+"\n")
-#outpos.close()
-
+outpos.close()
+outneg.close()

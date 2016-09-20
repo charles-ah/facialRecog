@@ -28,7 +28,7 @@ def addfaces(img):
 
 # Detect faces in the image  
 def detect(scale,img,origX,origY):
-    
+#    print img
     # Read the image                                                                            
   #  img = cv2.imread(image)
     imgH = img.shape[0]
@@ -78,12 +78,12 @@ def detect(scale,img,origX,origY):
 
 #print os.getcwd()
 for imagePath in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces"):
-    if imagePath.endswith(".png"):
+    if imagePath.endswith(".png") or imagePath.endswith(".jpg"):
         #print imagePath
         out.write(imagePath[0:-4]+"\n")
         image = cv2.imread("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/"+imagePath)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
+        #print gray
         detect(1.1,gray,0,0)
 #out.close()
 '''
