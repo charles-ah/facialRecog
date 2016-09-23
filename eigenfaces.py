@@ -43,7 +43,7 @@ def detect(scale,img,origX,origY):
         img,
         scaleFactor=scale,
         minNeighbors=1,
-        minSize=(20, 20),
+        minSize=(150, 150),
         flags = cv2.cv.CV_HAAR_SCALE_IMAGE
         )
 
@@ -77,22 +77,22 @@ def detect(scale,img,origX,origY):
     cv2.waitKey(0)
 
 #print os.getcwd()
-for imagePath in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces"):
+for imagePath in os.listdir("faces"):
     if imagePath.endswith(".png") or imagePath.endswith(".jpg"):
         #print imagePath
         out.write(imagePath[0:-4]+"\n")
-        image = cv2.imread("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/"+imagePath)
+        image = cv2.imread("faces/"+imagePath)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         #print gray
         detect(1.1,gray,0,0)
 #out.close()
 '''
-for dir in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/att_faces"):
-    for imagePath in os.listdir("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/att_faces/"+dir):
+for dir in os.listdir("faces/att_faces"):
+    for imagePath in os.listdir("faces/att_faces/"+dir):
         if imagePath.endswith(".pgm"):
         #print imagePath
             out.write(dir + imagePath[0:-4]+"\n")
-            image = cv2.imread("/Users/CZhang/Documents/CZ/CS/MachineLearning/facialRecog/faces/att_faces/"+dir+"/"+imagePath)
+            image = cv2.imread("faces/att_faces/"+dir+"/"+imagePath)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
            # gray = image
             detect(1.1,gray,0,0)
