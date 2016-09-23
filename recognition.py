@@ -71,7 +71,7 @@ def detect(scale,img,origX,origY):
         img,
         scaleFactor=scale,
         minNeighbors=1,
-        minSize=(50, 50),
+        minSize=(150, 150),
         flags = cv2.cv.CV_HAAR_SCALE_IMAGE
         )
 
